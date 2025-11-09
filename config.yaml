@@ -1,0 +1,28 @@
+# LayerKit 配置文件
+
+server:
+  port: ":8080"
+  mode: "debug"  # debug 或 release
+  read_timeout: 10s
+  write_timeout: 10s
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: "*"
+  db: 0
+  ttl: 24h  # 缓存过期时间
+
+upload:
+  max_size: 10485760  # 10MB (字节)
+  upload_dir: "./uploads"
+  allowed_types:
+    - "image/jpeg"
+    - "image/png"
+    - "image/jpg"
+
+grabcut:
+  iterations: 5          # GrabCut 迭代次数
+  border_size: 10        # 边界大小(像素)
+  max_concurrent: 3      # 最大并发处理数
+  queue_timeout: 30      # 队列等待超时时间(秒)
+  cleanup_temp_files: true  # 是否自动删除临时文件
