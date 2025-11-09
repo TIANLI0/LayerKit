@@ -2,7 +2,12 @@ version: '3.8'
 
 services:
   layerkit:
-    build: .
+    # 选项1: 使用 Docker Hub 预构建镜像（推荐，更快）
+    image: tianliwu/layerkit:latest
+    
+    # 选项2: 本地构建（注释掉上面的 image，取消注释下面的 build）
+    # build: .
+    
     ports:
       - "8080:8080"
     volumes:
@@ -12,6 +17,7 @@ services:
       - GIN_MODE=release
     depends_on:
       - redis
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -19,6 +25,7 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    restart: unless-stopped
 
 volumes:
   redis_data:

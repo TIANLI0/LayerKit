@@ -14,6 +14,14 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	Version   = "dev"
+	BuildTime = "unknown"
+	BuildID   = "unknown"
+	GitCommit = "unknown"
+	GitBranch = "unknown"
+)
+
 func main() {
 	// 加载配置
 	cfg := config.New()
@@ -25,7 +33,11 @@ func main() {
 	}
 	defer utils.Sync()
 
-	utils.Logger.Info("starting LayerKit server")
+	utils.Logger.Info("starting LayerKit server",
+		zap.String("version", Version),
+		zap.String("build_time", BuildTime),
+		zap.String("git_commit", GitCommit),
+		zap.String("git_branch", GitBranch))
 
 	// 确保上传目录存在
 	if err := os.MkdirAll(cfg.Upload.UploadDir, 0755); err != nil {
@@ -60,6 +72,24 @@ func main() {
 	// 静态文件服务
 	r.Static("/static", "./static")
 	r.StaticFile("/", "./static/index.html")
+
+	// 健康检查和版本信息
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"version": Version,
+		})
+	})
+
+	r.GET("/version", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"version":    Version,
+			"build_time": BuildTime,
+			"build_id":   BuildID,
+			"git_commit": GitCommit,
+			"git_branch": GitBranch,
+		})
+	})
 
 	// API路由
 	api := r.Group("/api/v1")

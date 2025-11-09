@@ -10,6 +10,7 @@
 - 🔍 **MD5查询**：支持通过MD5哈希值快速查询历史结果
 - 📝 **Zap日志**：结构化日志记录，便于调试和监控
 - 🌐 **原生JS Demo**：提供开箱即用的前端演示页面
+- 🤖 **自动构建**：GitHub Actions 自动构建 Docker 镜像
 
 ## 技术栈
 
@@ -18,12 +19,31 @@
 - **缓存**: Redis
 - **日志**: Zap
 - **前端**: 原生 JavaScript + HTML5 Canvas
+- **CI/CD**: GitHub Actions + Docker
 
 ## 快速开始
 
 ### 方式1: 使用 Docker（推荐，最简单）
 
 **无需安装 OpenCV！**
+
+#### 使用预构建镜像（推荐）
+
+```bash
+# 1. 拉取最新镜像
+docker pull crpi-rd21818prkp9226g.cn-shanghai.personal.cr.aliyuncs.com/hongmoai/layerkit:latest
+
+# 2. 使用 docker-compose 启动（包含 Redis）
+docker-compose up -d
+
+# 访问
+# API: http://localhost:8080
+# 前端: http://localhost:8080
+# 健康检查: http://localhost:8080/health
+# 版本信息: http://localhost:8080/version
+```
+
+#### 本地构建镜像
 
 ```bash
 # 启动服务（包含 Redis）
@@ -504,7 +524,55 @@ GrabCut 是一种基于图割的前景提取算法，本项目使用以下策略
 - 支持配置 GrabCut 迭代次数平衡精度和速度
 - 可选：添加图片预处理（缩放、压缩）
 
+## CI/CD 自动构建
+
+本项目配置了 GitHub Actions 自动构建流程，当推送版本标签时自动构建并推送 Docker 镜像。
+
+### 发布新版本
+
+```bash
+# 1. 提交代码
+git add .
+git commit -m "feat: 新功能"
+git push
+
+# 2. 创建并推送版本标签（触发自动构建）
+git tag v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+```
+
+### 使用预构建镜像
+
+```bash
+# 拉取最新版本
+docker pull crpi-rd21818prkp9226g.cn-shanghai.personal.cr.aliyuncs.com/hongmoai/layerkit:latest
+
+# 拉取指定版本
+docker pull crpi-rd21818prkp9226g.cn-shanghai.personal.cr.aliyuncs.com/hongmoai/layerkit:v1.0.0
+```
+
+### 查看版本信息
+
+```bash
+# 健康检查
+curl http://localhost:8080/health
+
+# 详细版本信息（包含构建时间、Git commit 等）
+curl http://localhost:8080/version
+```
+
+详细的 CI/CD 配置说明请查看 **[DOCKER_CI.md](DOCKER_CI.md)**
+
+## 项目文档
+
+- 📘 [故障排除指南](TROUBLESHOOTING.md) - 常见问题解决方案
+- 📗 [OpenCV 安装指南](OPENCV_SETUP.md) - OpenCV 环境配置
+- 📙 [快速开始指南](QUICKSTART.md) - MinGW64 快速上手
+- 📕 [算法说明](ALGORITHM.md) - GrabCut 算法详解
+- 📔 [CI/CD 配置](DOCKER_CI.md) - 自动构建部署指南
+
 ## License
 
 MIT
+
 
